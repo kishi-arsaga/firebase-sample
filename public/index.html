@@ -45,22 +45,38 @@
       <h2>Welcome</h2>
       <div class="container">
         <div class="container">
-          <div class="input-group mb-3 flex-column" id="upload-form">
+          <!-- <div class="input-group mb-3 flex-column" id="upload-form">
             <div class="container mb-3">
               <img src="" alt="" id="preview" class="w-100">
               <span>ファイルアップロード</span>
               <input type="file" class="form-control" id="upload">
             </div>
             <input class="btn btn-primary mb-3" type="button" value="登録" id="upload-button">
+          </div> -->
+        </div>
+        <div class="container">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">An item</li>
+            <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li>
+            <li class="list-group-item">A fourth item</li>
+            <li class="list-group-item">And a fifth one</li>
+          </ul>
+          <div class="d-flex flex-column bd-highlight mb-3">
+            <div class="mb-3">
+              <label for="message" class="form-label">Password</label>
+              <input type="text" class="form-control" id="message" placeholder="コメント">
+            </div>
+            <input class="btn btn-primary mb-3" type="button" value="送信" id="post">
           </div>
         </div>
         <div class="container" id="login-form">
           <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Email address</label>
+            <label for="email" class="form-label">Email address</label>
             <input type="email" class="form-control" id="email" placeholder="name@example.com">
           </div>
           <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Password</label>
+            <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" placeholder="name@example.com">
           </div>
         </div>
@@ -122,36 +138,53 @@
           });
         })
 
-
-        $('#upload').on('change', () => {
-          const image = $('#upload').prop('files')[0];
-          //FileReaderをインスタンス化
-          const reader = new FileReader();
-          //添付ファイルの読み込みが成功したときに実行されるイベント（成功時のみ）
-          //一旦飛ばしてreader_ .readAsDataURLが先に動く
-          reader.onload = function() {
-              //Data URI Schemeをimgタグのsrcにいれてリアルタイムに添付画像を描画する
-              $('#preview').attr('src', reader.result);
-          }
-          //Data URI Schemeを取得する 
-          reader.readAsDataURL(image);
+        $('#post').on('click', () => {
+          if(!$('#message').val()) return
+          firebase.firestore().collection("messages").add({ text: $('#message').val() }).catch(error => {
+              // error
+              alert(error)
+          })
         })
 
-        $('#upload-button').on('click', () => {
-          firebase
-            .storage()
-            .ref()
-            .child('images')
-            .put($('#image').val()).then(snapshot => {
-                // success
-                const url = snapshot.ref.getDownloadURL();
-                console.log(url) // ダウンロードURL
-                alert(url)
-            }).catch(error => {
-                // error
-                alert(error)
-            });
-        })
+        firebase
+          .collection("messages")
+          .onSnapshot(snapshot => {
+              // <ul class="list-group list-group-flush">
+              //   <li class="list-group-item">And a fifth one</li>
+              // </ul>
+          });
+
+
+        // $('#upload').on('change', () => {
+        //   const image = $('#upload').prop('files')[0];
+        //   //FileReaderをインスタンス化
+        //   const reader = new FileReader();
+        //   //添付ファイルの読み込みが成功したときに実行されるイベント（成功時のみ）
+        //   //一旦飛ばしてreader_ .readAsDataURLが先に動く
+        //   reader.onload = function() {
+        //       //Data URI Schemeをimgタグのsrcにいれてリアルタイムに添付画像を描画する
+        //       $('#preview').attr('src', reader.result);
+        //   }
+        //   //Data URI Schemeを取得する 
+        //   reader.readAsDataURL(image);
+        // })
+
+        // $('#upload-button').on('click', () => {
+        //   firebase
+        //     .storage()
+        //     .ref()
+        //     .child('images')
+        //     .put($('#image').val()).then(snapshot => {
+        //         // success
+        //         const url = snapshot.ref.getDownloadURL();
+        //         console.log(url) // ダウンロードURL
+        //         alert(url)
+        //     }).catch(error => {
+        //         // error
+        //         alert(error)
+        //     });
+        // })
+        
         // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
         // firebase.firestore().doc('/foo/bar').get().then(() => { });
         // firebase.functions().httpsCallable('yourFunction')().then(() => { });
