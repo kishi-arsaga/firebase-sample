@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "docker-firebase"
+    "default": "arsaga-firebase-dev"
   }
 }
